@@ -18,10 +18,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print('Nawiązano połączenie z: {}'.format(addr))
         conn.sendall(len(tree_str).to_bytes(8, byteorder='big'))
-        conn.sendall(tree_str)
+        while len(tree_str) > 0:
+            data = tree_str[0:512]
+            conn.sendall(data)
+            tree_str = tree_str[512:]
         i = 1
         while not reader.isEOF():
             print("Wysyłam pakiet nr: {}".format(i), end="\r")
             i+=1
             conn.sendall(reader.readNext())
         print('')
+
+print("Obliczam poziom kompresji: ")

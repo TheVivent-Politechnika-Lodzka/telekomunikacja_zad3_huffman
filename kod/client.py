@@ -12,7 +12,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     print('Utworzono połączenie z {}:{}'.format(HOST,PORT))
     size = int.from_bytes(s.recv(4096), "big")
-    data = s.recv(size)
+    data = b''
+    while len(data) != size:
+        data += s.recv(4096)
     tree = pickle.loads(data)
     writer = HuffmanWriter(filename, tree)
     
