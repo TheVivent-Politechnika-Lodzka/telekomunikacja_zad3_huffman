@@ -1,11 +1,14 @@
-import sys
-from Huffman import Huffman
+from Huffman import HuffmanReader
+from Huffman import HuffmanWriter
 
-huff = Huffman(input("Podaj nazwę pliku: "))
 
-huff.analyze()
-huff.createTree()
-# print(huff.tree)
-# huff.printTree()
+read = HuffmanReader(input("Podaj nazwę pliku do odczytu: "))
+write = HuffmanWriter(input("Podaj nazwę pliku do zapisu: "), read.tree)
+read.printWeight()
 
-print(sys.getsizeof(huff.tree))
+while not read.isEOF():
+    write.write(read.readNext())
+
+
+
+# print(sys.getsizeof(huff.tree))
