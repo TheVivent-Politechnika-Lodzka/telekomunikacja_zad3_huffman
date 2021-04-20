@@ -1,3 +1,4 @@
+from config import *
 from bitstring import BitArray
 
 class HuffmanReader:
@@ -26,7 +27,7 @@ class HuffmanReader:
         freq = {}
         # zaanalizuj plik bajt po bajcie
         while True:
-            byte = self.FILE.read(1)
+            byte = self.FILE.read(WORD_SIZE)
             # jeżeli koniec pliku to zakończ
             if not byte: break
             # dopisz / zapisz ilość wystąpień danego byte'u
@@ -99,15 +100,15 @@ class HuffmanReader:
         print("{}B -> {}B".format(OG, after))
         print("{}% kompresji".format(round((1-after/OG)*100, 2)))
 
-    def readNext(self, bytes_to_read=512):
+    def readNext(self):
         to_send = BitArray()
         # okreslenie ile razy ma się wykonać pętla (ilość bitów)
-        bits_to_read = bytes_to_read * 8
+        bits_to_read = PACKET_SIZE
         while len(to_send.bin) != bits_to_read:
             # jeżeli wartość jest pusta to 
             if len(self.buffer) == 0:
                 # przypisujemy pierwszy bajt z pliku 
-                byte = self.FILE.read(1)
+                byte = self.FILE.read(WORD_SIZE)
                 # jeżeli nie ma to kończymy
                 if not byte:
                     self.EOF = True
@@ -119,6 +120,9 @@ class HuffmanReader:
             # ucinamy dodany bit
             self.buffer = self.buffer[1:]
         return to_send.tobytes()
+    
+    def close(self):
+        self.FILE.close()
 
     def isEOF(self):
         return self.EOF
@@ -161,6 +165,9 @@ class HuffmanWriter:
         self.FILE.write(result)
         # jeżeli nie dokończono jeszcze odczytu jakiegoś bajtu
         # to jest to zapisane w bufforze
+
+    def close(self):
+        self.FILE.close()
 
 
 class Node:
